@@ -3,4 +3,7 @@
 
  feat ? feature - criar algo novo no projeto
  fix? bugfix - corrigir algo errado
- doc ? documentação  documentar algo do projeto
+ doc ? documentação  
+
+
+ 
