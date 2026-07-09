@@ -9,6 +9,27 @@ app.get("/api/v1/somar", (req, res) => {
     res.status(200).send({message: resultado })
 })
 
+app.get("/api/v1/subtrair", (req, res) => {
+    const {num1, num2} = req.query
+    const resultado = Number(num1) - Number(num2)
+
+   res.status(200).send({message: resultado })
+})
+
+app.get("/api/v1/multiplicacao", (req, res) => {
+    const {num1, num2} = req.query
+    const resultado = Number(num1) * Number(num2)
+
+
+res.status(200).send({message: resultado })
+})
+
+app.get("/api/v1/dividir", (req, res) => {
+    const {num1, num2} = req.query
+    const resultado = Number(num1) / Number(num2)
+
+    res.status(200).send({message: resultado})
+})
 
 
 
