@@ -2,27 +2,38 @@ import express from 'express'
 import bancoDeDados from './repository/index.js'    
 
 const app = express()
-app.get("/api/pessoa/:id", (req, res) => {
-    const id = req.params.id
-    const pessoa =bancoDeDados.find(it => it.id == id)
-    if (!pessoa) {
-        res.send({message: "Pessoa não encontrada"})
-    }
+app.get("/api/v1/somar", (req, res) => {
+    const {num1, num2} = req.query
+    const resultado = Number(num1) + Number(num2)
+
+    
+
+    res.send({  })
+})
+
+app.post("/api/v1/somar", (req, res) => {
+    const {num1, num2, num3} = req.body
+    const resultado = Number(num1) + Number(num2) + Number(num3)
+
+})
+
+app.post("/api/v1/somar", (req, res) => {
+    const {num1, num2, num3, num4, num5} = req.body
+    const resultado = Number(num1) + Number(num2) + Number(num3) + Number(num4) + Number(num5)
+
+
+})
+
+app.post("/api/v1/somar", (req, res) => {
+    const {num1, num2} = req.body
+    const resultado = Number(num1) + Number(num2)
+
+
+})
 
     res.send({ pessoa })
-})
 
-app.get("/api/pessoa", (req, res) => {
-    const {id, name} = req.query
 
-    if(!id || !name) {
-        res.send({ message: "Favor informar id e name"})
-        return
-    }
-    bancoDeDados.push({id, name })
-    console.log(bancoDeDados)
-    res.send({message: "Pessoa criada com sucesso"})
-})
 
 // Inicia o servidor Express na porta 3000 e define uma função de retorno de
 app.listen(3000, () => {
