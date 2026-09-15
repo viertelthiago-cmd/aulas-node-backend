@@ -21,25 +21,25 @@ class ServiceCarro {
         // return carro
     }
     //função(parametros)=infinitos.
-    Criar(id, marca, ano) {
-        // if (!id || !marca || !ano) {
-        //         throw new Error({ mensagem: "Favor informar todos os dados" })
+    async Criar(id, marca, ano) {
+         if (!id || !marca || !ano) {
+                throw new Error({ mensagem: "Favor informar todos os dados" })
                 
-        //     }
-        //     RepositoryCarro.push({ id, marca, ano })
+            }
+             const carro = await RepositoryCarro.Create(marca, ano)
 
-        //     return {id, marca, ano}
+             return carro
     }
 
     Alterar() {}
 
     Deletar(id) {
-        // if (!id){
-        //     throw new Error("Favor informa o ID")
-        // }
-        //  RepositoryCarro.splice(it => it.id === id, 1)
+         if (!id){
+         throw new Error("Favor informa o ID")
+         }
+        const carro =  RepositoryCarro.Delete(id)
 
-        //  return id
+       return carro
     }
 
 }
