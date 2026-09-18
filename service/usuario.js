@@ -1,57 +1,89 @@
-import Usuario from "../model/usuario.js"
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import RepositoryUsuario from '../repository/usuario.js'
+
+const segredo = 'M3uS3gr3d0'
 
 class ServiceUsuario {
 
     // Core- Regra de Negocio
-    Buscar() {
-         return RepositoryUsuario.Find()
+    async Buscar() {
+        return RepositoryUsuario.Find()
     }
+
+    async Detalhe(id) {
+        if(!id) {
+            throw new Error("Favor informar o ID")
+        }
+
+        const usuario = await RepositoryUsuario.FindById(id)
         
+        if(!usuario) {
+            throw new Error(`ID ${id} do usuario não encontrado`)
+        }
 
-    Detalhe(id) {
-        // if(!id) {
-        //     throw new Error("Favor informar o ID")
-        // }
-        // const usuario = usuario.find(it => it.id === id)
-
-        // if(!usuario) {
-        //     throw new Error(`ID ${id}do carro não encontrado`)
-        // }
-
-        // return usuario
+        return usuario
     }
-    //função(parametros)=infinitos.
-    async Criar(id, marca, ano) {
-         if (!id || !marca || !ano) {
-                throw new Error({ mensagem: "Favor informar todos os dados" })
-                
-            }
-             const usuario = await RepositoryUsuario.Create(marca, ano)
+    // Função(parametros, parametros, parametros)
+    async Criar(email, senha) {
+        if (!email || !senha) {
+            throw new Error("Favor informar todos os dados")
+        }
 
-             return usuario
+        const senhaCripto = await bcrypt.hash(senha, 12)
+
+        const usuario = await RepositoryUsuario.Create(email, senhaCripto)
+
+        return usuario
     }
 
-    Alterar() {}
+    async Alterar(id, email, senha) {
+        if (!id) {
+            throw new Error("Favor informar os dados");
+        }
 
-    Deletar(id) {
-         if (!id){
-         throw new Error("Favor informa o ID")
-         }
-        const usuario =  RepositoryUsuario.Delete(id)
+        const senhaCripto = !senha // ternario
+            ? undefined // se sim
+            : await bcrypt.hash(senha, 12) // se nao
 
-       return usuario
+        const usuarioAlterado = await RepositoryUsuario.Update(id, email, senhaCripto)
+        
+        return usuarioAlterado
     }
 
-Deletar(email, senha) {
-         if (!id){
-         throw new Error("Favor informa o ID")
-         }
-        const usuario =  RepositoryUsuario.Delete(id)
+    async Deletar(id) {
+        if (!id) {
+            throw new Error("Favor informar o ID")
+        }
+        
+        const usuario = await RepositoryUsuario.Delete(id)
 
-       return usuario
+        return usuario
     }
 
+    async Login(email, senha) {
+        if(!email || !senha) {
+            throw new Error("Email ou senha inválido")
+        }
+
+        const usuario = await RepositoryUsuario.FindByEmail(email)
+
+        if(!usuario) {
+            throw new Error("Email ou senha inválido")
+        }
+
+        if(
+           !(await bcrypt.compare(String(senha), usuario.senha)) 
+        ) {
+            throw new Error("Email ou senha inválido")
+        }
+
+        return jwt.sign(
+            { id: usuario.id, email },
+            segredo,
+            { expiresIn: 60 * 60 }
+        )
+    }
 
 }
 

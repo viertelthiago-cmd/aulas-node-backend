@@ -1,40 +1,90 @@
-import usuario from '../model/usuario.js'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import RepositoryUsuario from '../repository/usuario.js'
 
-class RepositoryUsuario {
+const segredo = 'M3uS3gr3d0'
 
-    async Find() {
-        const usuario = await usuario.findAll()
+class ServiceUsuario {
+
+    // Core- Regra de Negocio
+    async Buscar() {
+        return RepositoryUsuario.Find()
+    }
+
+    async Detalhe(id) {
+        if(!id) {
+            throw new Error("Favor informar o ID")
+        }
+
+        const usuario = await RepositoryUsuario.FindById(id)
+        
+        if(!usuario) {
+            throw new Error(`ID ${id} do usuario não encontrado`)
+        }
 
         return usuario
     }
-    async FindById(id) {
-        const usuarioDetalhes = await usuario.FindByPk(id)
-
-        return usuarioDetalhes
-    }
-    async Create(marca, ano) {
-        const usuarioCreate = await usuario.create({marca, ano})
-
-        return usuarioCreate
-    }
-    async Update() {
-        const uapdated = await usuario.Update()
-
-        return uapdated
-    }
-    async Delete(id){
-        const usuarioDeletar = await usuario.findByPk(id)
-
-        if(!usuarioDeletar) {
-            throw new Error ("Carro não encontrado")
+    // Função(parametros, parametros, parametros)
+    async Criar(email, senha) {
+        if (!email || !senha) {
+            throw new Error("Favor informar todos os dados")
         }
-        await usuarioDeletar
 
-        return usuarioDeletar
+        const senhaCripto = await bcrypt.hash(senha, 12)
+
+        const usuario = await RepositoryUsuario.Create(email, senhaCripto)
+
+        return usuario
     }
-    async FindByEmail(email) {
-        return usuario.findOne({where})
+
+    async Alterar(id, email, senha) {
+        if (!id) {
+            throw new Error("Favor informar os dados");
+        }
+
+        const senhaCripto = !senha // ternario
+            ? undefined // se sim
+            : await bcrypt.hash(senha, 12) // se nao
+
+        const usuarioAlterado = await RepositoryUsuario.Update(id, email, senhaCripto)
+        
+        return usuarioAlterado
     }
+
+    async Deletar(id) {
+        if (!id) {
+            throw new Error("Favor informar o ID")
+        }
+        
+        const usuario = await RepositoryUsuario.Delete(id)
+
+        return usuario
+    }
+
+    async Login(email, senha) {
+        if(!email || !senha) {
+            throw new Error("Email ou senha inválido")
+        }
+
+        const usuario = await RepositoryUsuario.FindByEmail(email)
+
+        if(!usuario) {
+            throw new Error("Email ou senha inválido")
+        }
+
+        if(
+           !(await bcrypt.compare(String(senha), usuario.senha)) 
+        ) {
+            throw new Error("Email ou senha inválido")
+        }
+
+        return jwt.sign(
+            { id: usuario.id, email },
+            segredo,
+            { expiresIn: 60 * 60 }
+        )
+    }
+
 }
 
-export default new RepositoryUsuario()
+export default new ServiceUsuario()

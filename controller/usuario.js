@@ -1,12 +1,11 @@
-import usuario from '../model/usuario.js'
 import ServiceUsuario from '../service/usuario.js'
 
 class ControllerUsuario {
     // Recebimento e a Saida das info
-    Buscar(req, res) {
+    async Buscar(_, res) {
         try {
-            const Usuario = ServiceUsuario.Buscar()
-            res.send({ mensagem: carros })
+            const usuarios = await ServiceUsuario.Buscar()
+            res.status(200).send({ mensagem: usuarios })
         } catch (error) {
             res.status(500).send({
                 mensagem: error.message
@@ -17,10 +16,10 @@ class ControllerUsuario {
     async Detalhe(req, res) {
         try {
             const id = req.params.id
-            
-            const Usuario = await ServiceUsuario.Detalhe(id)
-            
-            res.send({ mensagem: usuario })
+
+            const usuario = await ServiceUsuario.Detalhe(id)
+
+            res.status(200).send({ mensagem: usuario })
         } catch (error) {
             res.status(500).send({
                 mensagem: error.message
@@ -30,11 +29,11 @@ class ControllerUsuario {
 
     async Criar(req, res) {
         try {
-            const {  email, senha } = req.body
+            const { email, senha } = req.body
 
-          await  ServiceUsuario.Criar( email, senha)
+            await ServiceUsuario.Criar(email, senha)
             
-            res.send({ mensagem: "Cadastrado com sucesso" })
+            res.status(201).send({ mensagem: "Cadastrado com sucesso" })
         } catch (error) {
             res.status(500).send({
                 mensagem: error.message
@@ -44,7 +43,12 @@ class ControllerUsuario {
 
     async Alterar(req, res) {
         try {
+            const { email, senha } = req.body
+            const id = req.params.id
+
+            await ServiceUsuario.Alterar(id, email, senha)
             
+            res.status(201).send({ mensagem: "Cadastrado com sucesso" })
         } catch (error) {
             res.status(500).send({
                 mensagem: error.message
@@ -53,12 +57,12 @@ class ControllerUsuario {
     }
 
     async Deletar(req, res) {
-        try{
-            const id = req.body.id
-            
-        await ServiceUsuario.Deletar(id)
+        try {
+            const identificador = req.params.id
 
-            res.send({ mensagem: "Deletado" })
+            await ServiceUsuario.Deletar(identificador)
+
+            res.status(204).send({ mensagem: "Deletado" })
         } catch (error) {
             res.status(500).send({
                 mensagem: error.message
@@ -66,14 +70,17 @@ class ControllerUsuario {
         }
     }
 
-    async Login(email, senha) {
-        if(!email || !senha) {
-            throw new Error("Email ou senha invalido")
-        }
-        const usuario = await RepositoryUsuario.FindByEmail(email)
-
-        if(!usuario) {
-            throw new Error("Email")
+    async Login(req, res) {
+        try {
+            const { email, senha } = req.body
+            const token = await ServiceUsuario.Login(email, senha)
+            res.status(200).send({
+                token
+            })
+        } catch (error) {
+            res.status(500).send({
+                mensagem: error.message
+            })
         }
     }
 

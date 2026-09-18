@@ -1,26 +1,25 @@
 // middleware -> auth.js
+// npm i bcrypt jsonwebtoken
 import jwt from 'jsonwebtoken'
 
-const segredo = 'm3ucalvo56'
+const segredo = 'M3uS3gr3d0'
 
-export default async function authMiddleware(req, res, next){
-    console.log("aaaaaaaaaaaquiiiiiii")
+export default async function authMiddleware(req, res, next) {
     try {
-        const token = req. headers['authorizatio']
-        // verificar jwt é valido
-        req.headers['authorization']
-        console.log(token)
+        const token = req.headers['authorization']
         if (!token){
             throw new Error()
         }
 
         const decoded = jwt.verify(token, segredo)
+        
 
+        // TODO
+
+        next()
     } catch (error) {
         res.status(403).send({
-            messge: "usuário ou senha inválido"
+            message: "Usuário ou senha inválido"
         })
     }
-    
 }
-    
