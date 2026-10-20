@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import RepositoryUsuario from '../repository/usuario.js'
+import RepositoryUsuario from './usuario.js'
 
 const segredo = 'M3uS3gr3d0'
 
