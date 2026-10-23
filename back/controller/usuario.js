@@ -71,7 +71,7 @@ class ControllerUsuario {
     }
 
     async Login(req, res) {
-        return res.status(200).send({ token: 123})
+        
         try {
             const { email, senha } = req.body
             const token = await ServiceUsuario.Login(email, senha)
