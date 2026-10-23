@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import './style.css'
+import { loginUser } from '../../api/user';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+
+const handlesubmit = async (e) => {
+  e.preventDefault() // parar o envio aotomatico do form
+ const response = await loginUser(email, senha)
+ localStorage.setItem('token', response.token )
+}
 
   return (
     <div className="login-container">
@@ -33,7 +41,7 @@ export default function Login() {
         <button
             className="button"
             type="submit"
-            onClick={() => {}}
+            onClick={handlesubmit}
         >Entrar</button>
         <button
             className="button back-button"
