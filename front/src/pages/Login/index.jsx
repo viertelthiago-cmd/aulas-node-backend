@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import './style.css'
 import { loginUser } from '../../api/user';
-
+import {useNavigate} from 'react-router-dom'
 
 export default function Login() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
@@ -11,6 +12,8 @@ const handlesubmit = async (e) => {
   e.preventDefault() // parar o envio aotomatico do form
  const response = await loginUser(email, senha)
  localStorage.setItem('token', response.token )
+//toast
+ return navigate('/')
 }
 
   return (
